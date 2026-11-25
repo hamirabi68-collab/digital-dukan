@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0F3D2E">
+<title>Digital Shop</title>
+<style>
+:root{
+  --ink:#0F3D2E; --paper:#F2F6F3; --card:#FFFFFF; --text:#17211C; --muted:#5A6B62; --line:#D5E0D9;
+  --gold:#F2B233; --gold-ink:#2A1B00; --ok:#1E8E5A; --warn-bg:#FFF4DC; --warn-line:#E8B54B; --err:#B3261E;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#0A130F; --card:#12201A; --text:#E7F0EA; --muted:#9DB0A5; --line:#25382F;
+    --warn-bg:#2A2108; --warn-line:#8A6A1E; --ok:#4CC38A; --err:#FF8A80; }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--paper);color:var(--text);
+  font-family:"Noto Nastaliq Urdu","Noto Naskh Arabic","Jameel Noori Nastaleeq",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:17px;line-height:1.9;color-scheme:light dark}
+html[lang=en] body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55}
+header{background:var(--ink);color:#fff;padding:14px 16px}
+.hrow{display:flex;align-items:center;gap:12px;max-width:560px;margin:0 auto}
+.logo{flex:none;width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:26px;line-height:1;overflow:hidden}
+.logo img,.badge img,.ico img{width:100%;height:100%;object-fit:cover}
+header h1{margin:0;font-size:21px;font-weight:700;line-height:1.6}
+header p{margin:0;opacity:.85;font-size:14px;line-height:1.6}
+.lang{margin-inline-start:auto;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:10px;padding:4px 12px;font:inherit;font-size:14px;cursor:pointer;flex:none}
+main{max-width:560px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.prod{display:flex;gap:14px;align-items:center;cursor:pointer;width:100%;text-align:start;font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.badge{flex:none;width:52px;height:52px;border-radius:12px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:26px;line-height:1;overflow:hidden}
+.prod h3{margin:0;font-size:18px;line-height:1.7}
+.prod .meta{color:var(--muted);font-size:14px;line-height:1.5}
+.price{margin-inline-start:auto;font-weight:700;font-size:18px;white-space:nowrap;direction:ltr}
+h2{font-size:21px;margin:6px 0 10px;line-height:1.7}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:12px;font:inherit;font-weight:700;font-size:18px;
+  background:var(--gold);color:var(--gold-ink);cursor:pointer;text-align:center;text-decoration:none}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);font-weight:600}
+.btn.wa{background:#1E8E5A;color:#fff}
+.btn.sm{display:inline-block;width:auto;padding:6px 14px;font-size:15px}
+.btn+.btn{margin-top:10px}
+.warn{background:var(--warn-bg);border:2px solid var(--warn-line);border-radius:12px;padding:14px 16px;margin:14px 0}
+.warn h3{margin:0 0 6px;font-size:18px;line-height:1.7}
+.warn ul{margin:0;padding-inline-start:22px}
+.warn li{margin:4px 0}
+.check{display:flex;gap:12px;align-items:flex-start;margin:14px 0;font-weight:600}
+.check input{width:24px;height:24px;flex:none;margin-top:6px;accent-color:var(--ink)}
+label.f{display:block;font-weight:600;margin:10px 0 2px;font-size:15px}
+input:not([type=checkbox]):not([type=color]):not([type=file]),textarea,select{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--text);font:inherit;line-height:1.6}
+input[type=color]{width:64px;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--paper);padding:2px}
+.ltr{direction:ltr;text-align:left}
+.tabs{display:flex;gap:8px;margin:10px 0 12px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:90px;padding:6px;border-radius:10px;border:2px solid var(--line);background:transparent;color:var(--text);font:inherit;font-weight:600;cursor:pointer}
+.tabs button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.acct{background:var(--paper);border:1px dashed var(--line);border-radius:12px;padding:12px;text-align:center}
+.acct .num{font-size:22px;font-weight:800;direction:ltr;word-break:break-all;line-height:1.5}
+.acct img{max-width:220px;width:100%;border-radius:10px;margin-top:8px;background:#fff}
+.small{font-size:14px;color:var(--muted);line-height:1.7}
+.err{color:var(--err);font-weight:600;margin-top:8px}
+.token{font-size:32px;font-weight:800;letter-spacing:2px;text-align:center;background:var(--ink);color:#fff;border-radius:14px;padding:14px;margin:12px 0;user-select:all;direction:ltr}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.steps li{counter-increment:s;display:flex;gap:12px;margin:8px 0}
+.steps li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;font-weight:700;font-size:15px;margin-top:6px}
+.ok{color:var(--ok);font-weight:700}
+.back{background:none;border:0;color:var(--text);font:inherit;font-weight:600;padding:4px 0;margin-bottom:4px;cursor:pointer}
+footer{text-align:center;padding:12px 16px 40px}
+footer button{background:none;border:0;color:var(--muted);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;margin:0 8px}
+.result{border-radius:12px;padding:12px;margin-top:14px;font-weight:600}
+.result.good{background:rgba(30,142,90,.14);border:1px solid var(--ok)}
+.result.bad{background:rgba(179,38,30,.12);border:1px solid var(--err)}
+details.card summary{cursor:pointer;font-weight:700;font-size:18px}
+details.card[open] summary{margin-bottom:6px}
+.imgrow{display:flex;gap:10px;align-items:center}
+.ico{flex:none;width:48px;height:48px;border-radius:10px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:24px;overflow:hidden}
+.bi{border-inline-start:3px solid var(--line);padding-inline-start:10px;margin-top:6px}
+.note{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:10px;padding:10px;font-size:14px;margin:10px 0;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="hrow">
+  <div class="logo" id="logo"></div>
+  <div><h1 id="shopName"></h1><p id="shopTag"></p></div>
+  <button class="lang" id="langBtn"></button>
+</div></header>
+<main id="app"></main>
+<footer>
+  <div><button id="vLink"></button><button id="oLink"></button></div>
+  <div class="small" id="ver"></div>
+</footer>
+
+<script>
+/* =========================================================
+   ڈیفالٹ سیٹنگز / Default settings
+   (عام طور پر آپ کو یہاں کچھ بدلنے کی ضرورت نہیں۔ سب کچھ ایپ کے اندر
+   "مالک" پینل سے بدلا جا سکتا ہے۔)
+   ========================================================= */
+const DEFAULT = {
+  version: "1.0.0",
+  pin: "1234",
+  defaultLang: "ur",
+  colors: { primary: "#0F3D2E", accent: "#F2B233" },
+  shop: {
+    icon: "🛍️",
+    name: { ur: "میری ڈیجیٹل دکان", en: "My Digital Shop" },
+    tag:  { ur: "کورس، کتابیں اور ویڈیوز", en: "Courses, books and videos" },
+    whatsapp: "923001234567"
+  },
+  accounts: [
+    { label: { ur: "ایزی پیسہ", en: "Easypaisa" }, title: "Your Name", number: "0300-1234567", qr: "" },
+    { label: { ur: "جاز کیش", en: "JazzCash" },     title: "Your Name", number: "0310-1234567", qr: "" },
+    { label: { ur: "بینک", en: "Bank" },            title: "Your Name", number: "PK00 XXXX 0000 0000 0000 0000", qr: "" }
+  ],
+  warnings: {
+    ur: ["یہ ڈیجیٹل چیز ہے۔ چیز بھیجنے کے بعد پیسے واپس نہیں ہوں گے۔",
+         "پیسے بھیجنے کے بعد ملا ہوا ٹوکن اور ٹرانزیکشن نمبر سنبھال کر رکھیں۔",
+         "چیز لینے کے لیے ٹوکن دکاندار کو واٹس ایپ پر بھیجنا ضروری ہے۔"],
+    en: ["This is a digital item. No refunds after it has been delivered.",
+         "Keep your token and transaction number safe after paying.",
+         "You must send the token to the seller on WhatsApp to receive the item."]
+  },
+  products: [
+    { id: "c1", icon: "🎓", price: 499,
+      type: { ur: "کورس", en: "Course" },
+      title: { ur: "نمونے کا کورس", en: "Sample course" },
+      desc: { ur: "یہ ایک نمونہ ہے۔ یہاں اپنے کورس کی پوری تفصیل لکھیں۔", en: "This is a sample. Describe your course fully here." },
+      warnings: { ur: ["یہ کورس صرف آپ کے اپنے استعمال کے لیے ہے۔"], en: ["This course is for your personal use only."] } },
+    { id: "b1", icon: "📘", price: 149,
+      type: { ur: "کتاب (PDF)", en: "Book (PDF)" },
+      title: { ur: "نمونے کی کتاب", en: "Sample book" },
+      desc: { ur: "یہاں کتاب کے بارے میں لکھیں۔", en: "Describe the book here." },
+      warnings: { ur: ["یہ PDF فائل ہے، چھپی ہوئی کتاب نہیں۔"], en: ["This is a PDF file, not a printed book."] } }
+  ]
+};
+
+/* ---------- Text (اردو / English) ---------- */
+const T = {
+  whatBuy:{ur:"کیا خریدنا ہے؟",en:"What would you like to buy?"},
+  back:{ur:"← واپس",en:"← Back"},
+  readFirst:{ur:"⚠️ خریدنے سے پہلے ضرور پڑھیں",en:"⚠️ Please read before buying"},
+  agree:{ur:"میں نے اوپر کی تفصیل اور تمام ہدایات پڑھ لی ہیں اور میں ان سے متفق ہوں۔",en:"I have read the description and all warnings above and I agree."},
+  buy:{ur:"خریدیں",en:"Buy"},
+  sendMoney:{ur:"پیسے بھیجیں",en:"Send payment"},
+  pickAcct:{ur:"جس اکاؤنٹ میں بھیجنا ہو وہ چنیں",en:"Choose where to send the money"},
+  acctName:{ur:"اکاؤنٹ کا نام",en:"Account name"},
+  copyNum:{ur:"نمبر کاپی کریں",en:"Copy number"},
+  copied:{ur:"کاپی ہو گیا ✔",en:"Copied ✔"},
+  copyHold:{ur:"دبا کر رکھیں اور کاپی کریں",en:"Press and hold to copy"},
+  payHint:{ur:"اپنی ایپ (ایزی پیسہ، جاز کیش یا بینک ایپ) سے {amt} ہی بھیجیں۔",en:"Send exactly {amt} from your Easypaisa, JazzCash or bank app."},
+  afterPay:{ur:"پیسے بھیجنے کے بعد یہ بھریں",en:"After paying, fill this in"},
+  yName:{ur:"آپ کا نام",en:"Your name"},
+  yMobile:{ur:"آپ کا موبائل نمبر",en:"Your mobile number"},
+  tid:{ur:"ٹرانزیکشن نمبر (TID)",en:"Transaction ID (TID)"},
+  tidHint:{ur:"یہ نمبر پیسے بھیجنے کے بعد ایپ کی رسید یا SMS میں ملتا ہے۔",en:"You can find it in the app receipt or SMS after paying."},
+  getToken:{ur:"میرا ٹوکن حاصل کریں",en:"Get my token"},
+  eName:{ur:"اپنا نام لکھیں۔",en:"Please enter your name."},
+  ePhone:{ur:"درست موبائل نمبر لکھیں، مثلاً 03001234567",en:"Enter a valid mobile number, e.g. 03001234567"},
+  eTid:{ur:"ٹرانزیکشن نمبر 6 سے 20 حروف/ہندسوں کا ہونا چاہیے۔",en:"Transaction ID must be 6 to 20 letters/digits."},
+  tokReady:{ur:"✔ آپ کا ٹوکن تیار ہے",en:"✔ Your token is ready"},
+  copyTok:{ur:"ٹوکن کاپی کریں",en:"Copy token"},
+  next:{ur:"اب آگے کیا کریں",en:"What to do next"},
+  s1:{ur:"نیچے سبز بٹن سے ٹوکن دکاندار کو واٹس ایپ پر بھیجیں۔",en:"Send the token to the seller on WhatsApp using the green button."},
+  s2:{ur:"دکاندار آپ کی ادائیگی چیک کرے گا۔",en:"The seller will check your payment."},
+  s3:{ur:"چیک ہوتے ہی وہ آپ کو \"{title}\" بھیج دے گا۔",en:"Once checked, the seller will send you \"{title}\"."},
+  sendWA:{ur:"ٹوکن واٹس ایپ پر بھیجیں",en:"Send token on WhatsApp"},
+  home:{ur:"ہوم پر جائیں",en:"Go home"},
+  waMsg:{ur:"السلام علیکم، میں نے \"{title}\" ({amt}) خریدا ہے۔\nنام: {nm}\nموبائل: {ph}\nٹرانزیکشن نمبر: {tid}\nٹوکن: {tok}\nبراہ کرم مجھے چیز بھیج دیں۔",
+         en:"Hello, I bought \"{title}\" ({amt}).\nName: {nm}\nMobile: {ph}\nTransaction ID: {tid}\nToken: {tok}\nPlease send me the item."},
+  vTitle:{ur:"ٹوکن چیک کریں (دکاندار)",en:"Check a token (seller)"},
+  vItem:{ur:"کون سی چیز",en:"Which item"},
+  vTid:{ur:"گاہک کا ٹرانزیکشن نمبر",en:"Customer's transaction ID"},
+  vTok:{ur:"گاہک کا ٹوکن",en:"Customer's token"},
+  check:{ur:"چیک کریں",en:"Check"},
+  vGood:{ur:"✔ ٹوکن درست ہے۔ اب اپنے اکاؤنٹ میں {tid} کی رقم چیک کر کے چیز بھیجیں۔",en:"✔ Token is valid. Now confirm the payment for {tid} in your account, then send the item."},
+  vBad:{ur:"✖ ٹوکن اس نمبر اور چیز سے میل نہیں کھاتا۔ چیز نہ بھیجیں۔",en:"✖ Token does not match this ID and item. Do not send the item."},
+  vNote:{ur:"ٹوکن درست نکلنے کے بعد بھی اپنی ایپ میں ٹرانزیکشن نمبر اور رقم ضرور دیکھ لیں۔",en:"Even if the token is valid, always confirm the transaction ID and amount in your own app."},
+  fVerify:{ur:"دکاندار: ٹوکن چیک کریں",en:"Seller: check token"},
+  fOwner:{ur:"مالک",en:"Owner"},
+  version:{ur:"ورژن",en:"Version"},
+  /* owner */
+  oTitle:{ur:"مالک کا پینل",en:"Owner panel"},
+  enterPin:{ur:"اپنا پن (PIN) لکھیں",en:"Enter your PIN"},
+  open:{ur:"کھولیں",en:"Open"},
+  wrongPin:{ur:"پن غلط ہے۔",en:"Wrong PIN."},
+  defPin:{ur:"آپ نے ابھی ڈیفالٹ پن 1234 رکھا ہے۔ اسے بدل لیں۔",en:"You are still using the default PIN 1234. Please change it."},
+  gen:{ur:"عام سیٹنگز",en:"General settings"},
+  verTxt:{ur:"ورژن نمبر (جو چاہیں لکھیں)",en:"Version number (write anything)"},
+  defLang:{ur:"شروع کی زبان (ur یا en)",en:"Starting language (ur or en)"},
+  colMain:{ur:"مرکزی رنگ",en:"Main colour"},
+  colAcc:{ur:"بٹن کا رنگ",en:"Button colour"},
+  shopIcon:{ur:"دکان کا آئیکن",en:"Shop icon"},
+  shopName:{ur:"دکان کا نام",en:"Shop name"},
+  tagline:{ur:"دکان کی سطر",en:"Tagline"},
+  wa:{ur:"واٹس ایپ نمبر (92 کے ساتھ، بغیر +)",en:"WhatsApp number (with 92, no +)"},
+  newPin:{ur:"مالک کا پن",en:"Owner PIN"},
+  accounts:{ur:"ادائیگی کے اکاؤنٹ",en:"Payment accounts"},
+  addAcct:{ur:"+ نیا اکاؤنٹ",en:"+ Add account"},
+  lbl:{ur:"نام (ٹیب پر)",en:"Label (on tab)"},
+  holder:{ur:"اکاؤنٹ ہولڈر کا نام",en:"Account holder name"},
+  number:{ur:"نمبر / IBAN",en:"Number / IBAN"},
+  qr:{ur:"QR کی تصویر",en:"QR image"},
+  products:{ur:"آپ کی چیزیں",en:"Your products"},
+  addProd:{ur:"+ نئی چیز",en:"+ Add product"},
+  remove:{ur:"حذف کریں",en:"Remove"},
+  icon:{ur:"آئیکن",en:"Icon"},
+  type:{ur:"قسم",en:"Type"},
+  title:{ur:"عنوان",en:"Title"},
+  desc:{ur:"تفصیل",en:"Description"},
+  price:{ur:"قیمت (روپے)",en:"Price (Rs)"},
+  warns:{ur:"ہدایات (ہر سطر ایک ہدایت)",en:"Warnings (one per line)"},
+  commonWarn:{ur:"تمام چیزوں کی عام ہدایات",en:"Warnings for all products"},
+  publish:{ur:"تبدیلیاں شائع کریں",en:"Publish changes"},
+  pubHelp:{ur:"آپ کی تبدیلیاں ابھی صرف اس فون میں ہیں۔ دوسروں تک پہنچانے کے لیے: ۱) \"ڈاؤن لوڈ\" دبائیں تاکہ config.json فائل بنے۔ ۲) اسے ایپ کی فائل کے ساتھ ایک ہی فولڈر میں رکھ کر ہوسٹنگ (Netlify Drop) پر دوبارہ اپلوڈ کریں۔ ۳) پھر \"مسودہ صاف کریں\" دبائیں۔",
+           en:"Your changes are only on this phone for now. To publish: 1) Press \"Download\" to get config.json. 2) Put it in the same folder as the app file and upload that folder again to your hosting (Netlify Drop). 3) Then press \"Clear draft\"."},
+  download:{ur:"ڈاؤن لوڈ (config.json)",en:"Download (config.json)"},
+  copyJson:{ur:"سیٹنگز کا متن کاپی کریں",en:"Copy settings text"},
+  reset:{ur:"مسودہ صاف کریں",en:"Clear draft"},
+  resetAsk:{ur:"اس فون کی غیر شائع شدہ تبدیلیاں مٹا دی جائیں؟",en:"Discard unpublished changes on this phone?"},
+  delAsk:{ur:"کیا واقعی حذف کریں؟",en:"Really remove this?"},
+  pickImg:{ur:"تصویر چنیں",en:"Choose image"},
+  emojiUrl:{ur:"ایموجی یا تصویر کا لنک",en:"Emoji or image link"},
+  ur:{ur:"اردو",en:"Urdu"}, en:{ur:"انگریزی",en:"English"},
+  other:{ur:"English",en:"اردو"}
+};
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+const mem = {};
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return mem[k] ?? null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k] = v; } },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){ delete mem[k]; } }
+};
+const clone = o => JSON.parse(JSON.stringify(o));
+let C = clone(DEFAULT), lang = "ur", ownerAuthed = false;
+let state = { screen: "list", product: null, acct: 0, order: null };
+
+const t = (k, o) => { let s = (T[k] || {})[lang] || k; if (o) s = s.replace(/\{(\w+)\}/g, (m,x) => o[x]); return s; };
+const L = o => (o && typeof o === "object") ? (o[lang] || o.ur || o.en || "") : (o || "");
+const LW = o => (o && (o[lang] && o[lang].length ? o[lang] : (o.ur && o.ur.length ? o.ur : (o.en || [])))) || [];
+const rs = n => "Rs " + Number(n).toLocaleString("en-US");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const getPath = (o,p) => p.split(".").reduce((a,k) => a == null ? a : a[k], o);
+const setPath = (o,p,v) => { const ks = p.split("."); const last = ks.pop(); const tgt = ks.reduce((a,k) => a[k] ??= {}, o); tgt[last] = v; };
+const saveDraft = () => store.set("draft", JSON.stringify(C));
+const isImg = v => /^(data:image|https?:|\/|\.\/)/i.test(v || "") || /\.(png|jpe?g|webp|svg|gif)$/i.test(v || "");
+const iconHTML = v => !v ? "🛍️" : (isImg(v) ? `<img src="${esc(v)}" alt="">` : esc(v));
+const lum = hex => { const n = parseInt(hex.slice(1), 16); return (0.299*(n>>16) + 0.587*((n>>8)&255) + 0.114*(n&255)) / 255; };
+
+/* ٹوکن: چیز + ٹرانزیکشن نمبر سے بنتا ہے */
+function makeToken(pid, tid){
+  const str = pid + "|" + tid.toUpperCase(); let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < str.length; i++){ const ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  const n = (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36).toUpperCase().padStart(8, "0").slice(-8);
+  return "TKN-" + n.slice(0,4) + "-" + n.slice(4);
+}
+
+function applyTheme(){
+  const r = document.documentElement.style;
+  r.setProperty("--ink", C.colors.primary);
+  r.setProperty("--gold", C.colors.accent);
+  r.setProperty("--gold-ink", lum(C.colors.accent) > 0.55 ? "#2A1B00" : "#FFFFFF");
+  document.querySelector("meta[name=theme-color]").content = C.colors.primary;
+}
+function updateChrome(){
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ur" ? "rtl" : "ltr";
+  $("#logo").innerHTML = iconHTML(C.shop.icon);
+  $("#shopName").textContent = L(C.shop.name);
+  $("#shopTag").textContent = L(C.shop.tag);
+  $("#langBtn").textContent = t("other");
+  $("#vLink").textContent = t("fVerify");
+  $("#oLink").textContent = t("fOwner");
+  $("#ver").textContent = t("version") + " " + C.version;
+  document.title = L(C.shop.name);
+}
+
+function go(screen, extra){ state = Object.assign(state, { screen }, extra || {}); render(); window.scrollTo(0,0); }
+function render(){
+  updateChrome();
+  ({ list: viewList, detail: viewDetail, pay: viewPay, done: viewDone, verify: viewVerify, login: viewLogin, owner: viewOwner })[state.screen]();
+}
+
+/* ---------- Buyer screens ---------- */
+function viewList(){
+  app.innerHTML = `<h2>${t("whatBuy")}</h2>` + C.products.map(p =>
+    `<button class="card prod" data-id="${esc(p.id)}">
+      <div class="badge" aria-hidden="true">${iconHTML(p.icon)}</div>
+      <div><h3>${esc(L(p.title))}</h3><div class="meta">${esc(L(p.type))}</div></div>
+      <div class="price">${rs(p.price)}</div></button>`).join("");
+  app.querySelectorAll(".prod").forEach(b => b.onclick = () => go("detail", { product: C.products.find(p => p.id === b.dataset.id) }));
+}
+
+function viewDetail(){
+  const p = state.product;
+  const warns = LW(C.warnings).concat(LW(p.warnings));
+  app.innerHTML = `
+    <button class="back" id="back">${t("back")}</button>
+    <div class="card">
+      <div class="badge" aria-hidden="true" style="margin-bottom:10px">${iconHTML(p.icon)}</div>
+      <h2 style="margin-top:0">${esc(L(p.title))}</h2>
+      <div class="small">${esc(L(p.type))}</div>
+      <p style="white-space:pre-line">${esc(L(p.desc))}</p>
+      <div class="price" style="margin:0">${rs(p.price)}</div>
+    </div>
+    <div class="warn"><h3>${t("readFirst")}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>
+    <label class="check"><input type="checkbox" id="agree"><span>${t("agree")}</span></label>
+    <button class="btn" id="buy" disabled>${t("buy")} — ${rs(p.price)}</button>`;
+  $("#back").onclick = () => go("list");
+  $("#agree").onchange = e => $("#buy").disabled = !e.target.checked;
+  $("#buy").onclick = () => go("pay");
+}
+
+function viewPay(){
+  const p = state.product;
+  if (state.acct >= C.accounts.length) state.acct = 0;
+  app.innerHTML = `
+    <button class="back" id="back">${t("back")}</button>
+    <h2>${t("sendMoney")}: ${rs(p.price)}</h2>
+    <div class="card">
+      <div class="small">${t("pickAcct")}</div>
+      <div class="tabs" id="tabs">${C.accounts.map((a,i) => `<button data-i="${i}" aria-pressed="${i === state.acct}">${esc(L(a.label))}</button>`).join("")}</div>
+      <div class="acct" id="acct"></div>
+      <p class="small">${t("payHint", { amt: rs(p.price) })}</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">${t("afterPay")}</h3>
+      <label class="f" for="nm">${t("yName")}</label><input type="text" id="nm" autocomplete="name">
+      <label class="f" for="ph">${t("yMobile")}</label><input type="tel" id="ph" class="ltr" inputmode="numeric" maxlength="11" placeholder="03001234567" autocomplete="tel">
+      <label class="f" for="tid">${t("tid")}</label><input type="text" id="tid" class="ltr" maxlength="20" autocapitalize="characters">
+      <div class="small">${t("tidHint")}</div>
+      <div class="err" id="err" role="alert"></div>
+      <button class="btn" id="get" style="margin-top:14px">${t("getToken")}</button>
+    </div>`;
+  $("#back").onclick = () => go("detail");
+  const draw = () => {
+    const a = C.accounts[state.acct] || {};
+    $("#acct").innerHTML = `<div class="small">${t("acctName")}: ${esc(a.title)}</div>
+      <div class="num">${esc(a.number)}</div>
+      <button class="btn ghost" id="cp" style="margin-top:8px">${t("copyNum")}</button>
+      ${a.qr ? `<img src="${esc(a.qr)}" alt="QR">` : ""}`;
+    $("#cp").onclick = async () => {
+      try { await navigator.clipboard.writeText(a.number); $("#cp").textContent = t("copied"); }
+      catch(e){ $("#cp").textContent = t("copyHold"); }
+    };
+    document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.i === state.acct)));
+  };
+  document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => { state.acct = +b.dataset.i; draw(); });
+  draw();
+  $("#get").onclick = () => {
+    const nm = $("#nm").value.trim(), ph = $("#ph").value.trim(), tid = $("#tid").value.trim().toUpperCase();
+    const err = m => $("#err").textContent = m;
+    if (nm.length < 2) return err(t("eName"));
+    if (!/^03\d{9}$/.test(ph)) return err(t("ePhone"));
+    if (!/^[A-Z0-9]{6,20}$/.test(tid)) return err(t("eTid"));
+    go("done", { order: { nm, ph, tid, token: makeToken(p.id, tid) } });
+  };
+}
+
+function viewDone(){
+  const p = state.product, o = state.order;
+  const msg = t("waMsg", { title: L(p.title), amt: rs(p.price), nm: o.nm, ph: o.ph, tid: o.tid, tok: o.token });
+  app.innerHTML = `
+    <div class="card"><div class="ok">${t("tokReady")}</div>
+      <div class="token">${o.token}</div>
+      <button class="btn ghost" id="copy">${t("copyTok")}</button></div>
+    <div class="card"><h3 style="margin-top:0">${t("next")}</h3>
+      <ol class="steps"><li><span>${t("s1")}</span></li><li><span>${t("s2")}</span></li><li><span>${esc(t("s3", { title: L(p.title) }))}</span></li></ol>
+      <a class="btn wa" style="margin-top:14px" target="_blank" rel="noopener" href="https://wa.me/${esc(C.shop.whatsapp)}?text=${encodeURIComponent(msg)}">${t("sendWA")}</a></div>
+    <button class="btn ghost" id="home">${t("home")}</button>`;
+  $("#copy").onclick = async () => {
+    try { await navigator.clipboard.writeText(o.token); $("#copy").textContent = t("copied"); }
+    catch(e){ $("#copy").textContent = t("copyHold"); }
+  };
+  $("#home").onclick = () => go("list");
+}
+
+function viewVerify(){
+  app.innerHTML = `
+    <button class="back" id="back">${t("back")}</button>
+    <h2>${t("vTitle")}</h2>
+    <div class="card">
+      <label class="f" for="vp">${t("vItem")}</label>
+      <select id="vp">${C.products.map(p => `<option value="${esc(p.id)}">${esc(L(p.title))} — ${rs(p.price)}</option>`).join("")}</select>
+      <label class="f" for="vu">${t("vTid")}</label><input type="text" id="vu" class="ltr" maxlength="20" autocapitalize="characters">
+      <label class="f" for="vt">${t("vTok")}</label><input type="text" id="vt" class="ltr" placeholder="TKN-XXXX-XXXX">
+      <button class="btn" id="chk" style="margin-top:14px">${t("check")}</button>
+      <div id="vr"></div><p class="small">${t("vNote")}</p>
+    </div>`;
+  $("#back").onclick = () => go("list");
+  $("#chk").onclick = () => {
+    const pid = $("#vp").value, tid = $("#vu").value.trim().toUpperCase(), tk = $("#vt").value.trim().toUpperCase();
+    const good = makeToken(pid, tid) === tk;
+    $("#vr").innerHTML = good ? `<div class="result good">${esc(t("vGood", { tid }))}</div>` : `<div class="result bad">${t("vBad")}</div>`;
+  };
+}
+
+/* ---------- Owner panel ---------- */
+function viewLogin(){
+  app.innerHTML = `
+    <button class="back" id="back">${t("back")}</button>
+    <h2>${t("oTitle")}</h2>
+    <div class="card">
+      <label class="f" for="pin">${t("enterPin")}</label>
+      <input type="tel" id="pin" class="ltr" inputmode="numeric" autocomplete="off">
+      <div class="err" id="err" role="alert"></div>
+      <button class="btn" id="go" style="margin-top:12px">${t("open")}</button>
+    </div>`;
+  $("#back").onclick = () => go("list");
+  $("#go").onclick = () => {
+    if ($("#pin").value.trim() === String(C.pin)) { ownerAuthed = true; go("owner"); }
+    else $("#err").textContent = t("wrongPin");
+  };
+}
+
+function fld(label, path, o = {}){
+  const v = getPath(C, path);
+  const attrs = `data-p="${esc(path)}"${o.lines ? ' data-lines="1"' : ""}${o.num ? ' data-num="1"' : ""}`;
+  const cls = o.ltr ? "ltr" : "";
+  const val = o.lines ? (v || []).join("\n") : (v ?? "");
+  return `<label class="f">${label}</label>` + ((o.lines || o.area)
+    ? `<textarea ${attrs} class="${cls}" rows="${o.rows || 3}">${esc(val)}</textarea>`
+    : `<input type="${o.type || "text"}" ${attrs} class="${cls}" value="${esc(val)}"${o.num ? ' inputmode="numeric"' : ""}>`);
+}
+function bi(label, base, o = {}){
+  return `<div class="bi">${fld(`${label} — ${t("ur")}`, base + ".ur", o)}${fld(`${label} — ${t("en")}`, base + ".en", o)}</div>`;
+}
+function imgField(label, path, max, bg){
+  const v = getPath(C, path) || "";
+  return `<label class="f">${label}</label>
+    <div class="imgrow"><span class="ico">${iconHTML(v)}</span>
+      <input type="text" class="ltr" data-p="${esc(path)}" placeholder="${t("emojiUrl")}" value="${esc(v.startsWith("data:") ? "" : v)}">
+      <label class="btn ghost sm" style="margin:0;white-space:nowrap">${t("pickImg")}<input type="file" accept="image/*" hidden data-img="${esc(path)}" data-max="${max}" data-bg="${bg || ""}"></label>
+    </div>`;
+}
+
+function viewOwner(){
+  if (!ownerAuthed) return viewLogin();
+  const defPin = String(C.pin) === "1234" ? `<div class="note">${t("defPin")}</div>` : "";
+  app.innerHTML = `
+    <button class="back" id="back">${t("back")}</button>
+    <h2>${t("oTitle")}</h2>${defPin}
+
+    <details class="card" open><summary>${t("gen")}</summary>
+      ${fld(t("verTxt"), "version", { ltr: true })}
+      ${fld(t("defLang"), "defaultLang", { ltr: true })}
+      <label class="f">${t("colMain")}</label><input type="color" data-p="colors.primary" value="${esc(C.colors.primary)}">
+      <label class="f">${t("colAcc")}</label><input type="color" data-p="colors.accent" value="${esc(C.colors.accent)}">
+      ${imgField(t("shopIcon"), "shop.icon", 128)}
+      ${bi(t("shopName"), "shop.name")}
+      ${bi(t("tagline"), "shop.tag")}
+      ${fld(t("wa"), "shop.whatsapp", { ltr: true })}
+      ${fld(t("newPin"), "pin", { ltr: true })}
+    </details>
+
+    <details class="card"><summary>${t("accounts")}</summary>
+      ${C.accounts.map((a, i) => `<div class="card" style="margin-top:10px">
+        ${bi(t("lbl"), `accounts.${i}.label`)}
+        ${fld(t("holder"), `accounts.${i}.title`)}
+        ${fld(t("number"), `accounts.${i}.number`, { ltr: true })}
+        ${imgField(t("qr"), `accounts.${i}.qr`, 360, "#fff")}
+        <button class="btn ghost" style="margin-top:12px" data-act="delAcct" data-i="${i}">${t("remove")}</button></div>`).join("")}
+      <button class="btn ghost" data-act="addAcct">${t("addAcct")}</button>
+    </details>
+
+    <details class="card"><summary>${t("commonWarn")}</summary>
+      ${fld(t("ur"), "warnings.ur", { lines: 1, rows: 5 })}
+      ${fld(t("en"), "warnings.en", { lines: 1, rows: 5, ltr: true })}
+    </details>
+
+    <details class="card"><summary>${t("products")}</summary>
+      ${C.products.map((p, i) => `<div class="card" style="margin-top:10px">
+        ${imgField(t("icon"), `products.${i}.icon`, 160)}
+        ${bi(t("type"), `products.${i}.type`)}
+        ${bi(t("title"), `products.${i}.title`)}
+        ${bi(t("desc"), `products.${i}.desc`, { area: 1, rows: 4 })}
+        ${fld(t("price"), `products.${i}.price`, { num: 1, ltr: true })}
+        ${fld(`${t("warns")} — ${t("ur")}`, `products.${i}.warnings.ur`, { lines: 1 })}
+        ${fld(`${t("warns")} — ${t("en")}`, `products.${i}.warnings.en`, { lines: 1, ltr: true })}
+        <button class="btn ghost" style="margin-top:12px" data-act="delProd" data-i="${i}">${t("remove")}</button></div>`).join("")}
+      <button class="btn ghost" data-act="addProd">${t("addProd")}</button>
+    </details>
+
+    <details class="card" open><summary>${t("publish")}</summary>
+      <p class="small">${t("pubHelp")}</p>
+      <button class="btn" data-act="download">${t("download")}</button>
+      <button class="btn ghost" data-act="copyJson">${t("copyJson")}</button>
+      <button class="btn ghost" data-act="reset">${t("reset")}</button>
+    </details>`;
+  $("#back").onclick = () => go("list");
+}
+
+/* خالی فیلڈ کے لیے ہموار ڈیفالٹ: desc کو عام متن (متعدد سطریں) رکھنا */
+app.addEventListener("input", e => {
+  const el = e.target; const p = el.dataset && el.dataset.p; if (!p) return;
+  let v = el.value;
+  if (el.dataset.lines === "1") v = v.split("\n").map(s => s.trim()).filter(Boolean);
+  if (el.dataset.num) v = Number(v) || 0;
+  setPath(C, p, v); saveDraft();
+  if (p.startsWith("shop") || p.startsWith("colors") || p === "version") { applyTheme(); updateChrome(); }
+});
+
+app.addEventListener("change", e => {
+  const el = e.target; const path = el.dataset && el.dataset.img; if (!path || !el.files[0]) return;
+  const max = +el.dataset.max || 160, bg = el.dataset.bg;
+  const img = new Image(); const url = URL.createObjectURL(el.files[0]);
+  img.onload = () => {
+    const k = Math.min(1, max / Math.max(img.width, img.height));
+    const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    const g = c.getContext("2d"); if (bg){ g.fillStyle = bg; g.fillRect(0, 0, c.width, c.height); }
+    g.drawImage(img, 0, 0, c.width, c.height);
+    setPath(C, path, c.toDataURL("image/webp", 0.85)); saveDraft(); URL.revokeObjectURL(url);
+    applyTheme(); render();
+  };
+  img.src = url;
+});
+
+app.addEventListener("click", async e => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const act = b.dataset.act, i = +b.dataset.i;
+  const json = () => JSON.stringify(C, null, 2);
+  if (act === "addAcct") C.accounts.push({ label: { ur: "نیا اکاؤنٹ", en: "New account" }, title: "", number: "", qr: "" });
+  else if (act === "delAcct"){ if (!confirm(t("delAsk"))) return; C.accounts.splice(i, 1); }
+  else if (act === "addProd") C.products.push({ id: "p" + Date.now(), icon: "📦", price: 100, type: { ur: "", en: "" }, title: { ur: "نئی چیز", en: "New product" }, desc: { ur: "", en: "" }, warnings: { ur: [], en: [] } });
+  else if (act === "delProd"){ if (!confirm(t("delAsk"))) return; C.products.splice(i, 1); }
+  else if (act === "download"){
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([json()], { type: "application/json" }));
+    a.download = "config.json"; document.body.appendChild(a); a.click(); a.remove(); return;
+  }
+  else if (act === "copyJson"){
+    try { await navigator.clipboard.writeText(json()); b.textContent = t("copied"); } catch(err){ b.textContent = t("copyHold"); } return;
+  }
+  else if (act === "reset"){ if (!confirm(t("resetAsk"))) return; store.del("draft"); await boot(true); return; }
+  saveDraft(); render();
+});
+
+$("#langBtn").onclick = () => { lang = lang === "ur" ? "en" : "ur"; store.set("lang", lang); render(); };
+$("#vLink").onclick = () => go("verify");
+$("#oLink").onclick = () => go(ownerAuthed ? "owner" : "login");
+
+/* ---------- Start ---------- */
+async function boot(keepLang){
+  C = clone(DEFAULT);
+  try {
+    const r = await fetch("config.json", { cache: "no-store" });
+    if (r.ok){ const j = await r.json(); if (j && Array.isArray(j.products)) C = Object.assign(clone(DEFAULT), j); }
+  } catch(e){}
+  try { const d = store.get("draft"); if (d){ const j = JSON.parse(d); if (j && Array.isArray(j.products)) C = Object.assign(clone(DEFAULT), j); } } catch(e){}
+  if (!keepLang) lang = store.get("lang") || C.defaultLang || "ur";
+  applyTheme(); go("list");
+}
+boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0F3D2E">
+<title>Digital Shop</title>
+<style>
+:root{
+  --ink:#0F3D2E; --paper:#F2F6F3; --card:#FFFFFF; --text:#17211C; --muted:#5A6B62; --line:#D5E0D9;
+  --gold:#F2B233; --gold-ink:#2A1B00; --ok:#1E8E5A; --warn-bg:#FFF4DC; --warn-line:#E8B54B; --err:#B3261E; --hot:#C62828;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#0A130F; --card:#12201A; --text:#E7F0EA; --muted:#9DB0A5; --line:#25382F;
+    --warn-bg:#2A2108; --warn-line:#8A6A1E; --ok:#4CC38A; --err:#FF8A80; --hot:#FF6B6B; }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--paper);color:var(--text);
+  font-family:"Noto Nastaliq Urdu","Noto Naskh Arabic","Jameel Noori Nastaleeq",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:17px;line-height:1.9;color-scheme:light dark}
+html[lang=en] body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55}
+header{background:var(--ink);color:#fff;padding:14px 16px}
+.hrow{display:flex;align-items:center;gap:12px;max-width:560px;margin:0 auto}
+.logo{flex:none;width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:26px;line-height:1;overflow:hidden}
+.logo img,.badge img{width:100%;height:100%;object-fit:cover}
+header h1{margin:0;font-size:21px;font-weight:700;line-height:1.6}
+header p{margin:0;opacity:.85;font-size:14px;line-height:1.6}
+.lang{margin-inline-start:auto;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;border-radius:10px;padding:4px 12px;font:inherit;font-size:14px;cursor:pointer;flex:none}
+main{max-width:560px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.post{padding:0;overflow:hidden;cursor:pointer}
+.post .pimg{width:100%;max-height:260px;object-fit:cover;display:block}
+.post .pb{padding:14px 16px}
+.post h3{margin:0;font-size:19px;line-height:1.7}
+.post .desc{color:var(--muted);font-size:15px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.badge{flex:none;width:52px;height:52px;border-radius:12px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:26px;line-height:1;overflow:hidden}
+.price{font-weight:800;font-size:20px;direction:ltr;display:inline-block}
+s.small{margin:0 6px}
+.chip{display:inline-block;font-size:13px;padding:0 10px;border-radius:99px;border:1px solid var(--line);color:var(--muted);line-height:1.8}
+.chip.hot{background:var(--hot);border-color:var(--hot);color:#fff}
+.chip.pending{background:var(--warn-bg);border-color:var(--warn-line);color:var(--text)}
+.chip.approved{background:rgba(30,142,90,.16);border-color:var(--ok);color:var(--ok)}
+.chip.rejected{background:rgba(179,38,30,.12);border-color:var(--err);color:var(--err)}
+.cd{display:inline-block;direction:ltr;font-weight:700;font-variant-numeric:tabular-nums;color:var(--hot);margin-top:2px}
+h2{font-size:21px;margin:6px 0 10px;line-height:1.7}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:12px;font:inherit;font-weight:700;font-size:18px;
+  background:var(--gold);color:var(--gold-ink);cursor:pointer;text-align:center;text-decoration:none}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line);font-weight:600}
+.btn.wa{background:#1E8E5A;color:#fff}
+.btn.red{background:transparent;color:var(--err);border:1px solid var(--err)}
+.btn.sm{display:inline-block;width:auto;padding:4px 14px;font-size:15px}
+.btn+.btn{margin-top:10px}
+.warn{background:var(--warn-bg);border:2px solid var(--warn-line);border-radius:12px;padding:14px 16px;margin:14px 0}
+.warn h3{margin:0 0 6px;font-size:18px;line-height:1.7}
+.warn ul{margin:0;padding-inline-start:22px}
+.check{display:flex;gap:12px;align-items:flex-start;margin:14px 0;font-weight:600}
+.check input{width:24px;height:24px;flex:none;margin-top:6px;accent-color:var(--ink)}
+label.f{display:block;font-weight:600;margin:10px 0 2px;font-size:15px}
+input:not([type=checkbox]):not([type=file]),textarea,select{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--text);font:inherit;line-height:1.6}
+.ltr{direction:ltr;text-align:left}
+.tabs{display:flex;gap:8px;margin:10px 0 12px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:90px;padding:6px;border-radius:10px;border:2px solid var(--line);background:transparent;color:var(--text);font:inherit;font-weight:600;cursor:pointer}
+.tabs button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.acct{background:var(--paper);border:1px dashed var(--line);border-radius:12px;padding:12px;text-align:center}
+.acct .num{font-size:22px;font-weight:800;direction:ltr;word-break:break-all;line-height:1.5}
+.acct img{max-width:240px;width:100%;border-radius:10px;margin-top:8px;background:#fff}
+.small{font-size:14px;color:var(--muted);line-height:1.7}
+.err{color:var(--err);font-weight:600;margin-top:8px}
+.token{font-size:30px;font-weight:800;letter-spacing:2px;text-align:center;background:var(--ink);color:#fff;border-radius:14px;padding:14px;margin:12px 0;user-select:all;direction:ltr}
+.back{background:none;border:0;color:var(--text);font:inherit;font-weight:600;padding:4px 0;margin-bottom:4px;cursor:pointer}
+footer{text-align:center;padding:12px 16px 40px}
+footer button{background:none;border:0;color:var(--muted);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;margin:0 8px}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.shot{width:100%;max-height:420px;object-fit:contain;border-radius:10px;background:#000;margin-top:8px}
+.thumb{width:96px;height:96px;object-fit:cover;border-radius:10px;margin-top:8px}
+.msgs{max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:4px 0}
+.bub{max-width:82%;padding:6px 12px;border-radius:14px;background:var(--paper);border:1px solid var(--line);white-space:pre-wrap;word-break:break-word}
+.bub.me{align-self:flex-end;background:var(--ink);color:#fff;border-color:var(--ink)}
+.sendrow{display:flex;gap:8px;margin-top:8px}
+.sendrow input{flex:1}
+.sendrow .btn{width:auto;padding:6px 18px}
+.tabbar{display:flex;gap:8px;margin-bottom:12px}
+.tabbar button{flex:1;padding:8px;border-radius:10px;border:2px solid var(--line);background:transparent;color:var(--text);font:inherit;font-weight:700;cursor:pointer}
+.tabbar button[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.note{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:10px;padding:10px;font-size:14px;margin:10px 0;line-height:1.7}
+#toast{position:fixed;left:12px;right:12px;bottom:14px;background:#B3261E;color:#fff;padding:10px 14px;border-radius:12px;display:none;z-index:9;font-size:14px;direction:ltr;text-align:left}
+</style>
+</head>
+<body>
+<header><div class="hrow">
+  <div class="logo" id="logo"></div>
+  <div><h1 id="shopName"></h1><p id="shopTag"></p></div>
+  <button class="lang" id="langBtn"></button>
+</div></header>
+<main id="app"></main>
+<footer>
+  <div><button id="fOrders"></button><button id="fOwner"></button></div>
+  <div class="small" id="ver"></div>
+</footer>
+<div id="toast"></div>
+
+<script type="module">
+let initializeApp, getAuth, onAuthStateChanged, signInAnonymously, signInWithEmailAndPassword, signOut,
+    getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, serverTimestamp;
+
+/* ---------- Default settings (real values come from config.json) ---------- */
+const DEFAULT = {
+  version: "3.0.0", defaultLang: "ur",
+  colors: { primary: "#0F3D2E", accent: "#F2B233" },
+  shop: { icon: "🛍️", name: { ur: "میری ڈیجیٹل دکان", en: "My Digital Shop" }, tag: { ur: "کورس، کتابیں اور ویڈیوز", en: "Courses, books and videos" }, whatsapp: "" },
+  accounts: [], warnings: { ur: [], en: [] }, firebase: null
+};
+
+/* ---------- Text (اردو / English) ---------- */
+const T = {
+  feed:{ur:"تازہ پوسٹیں",en:"Latest posts"}, noPosts:{ur:"ابھی کوئی پوسٹ نہیں۔",en:"No posts yet."},
+  offer:{ur:"آفر",en:"Offer"}, offerEnded:{ur:"آفر ختم",en:"Offer ended"},
+  endsIn:{ur:"آفر ختم ہونے میں",en:"Offer ends in"}, endsAt:{ur:"آخری وقت",en:"Ends at"}, d:{ur:"دن",en:"d"},
+  back:{ur:"← واپس",en:"← Back"},
+  readFirst:{ur:"⚠️ خریدنے سے پہلے ضرور پڑھیں",en:"⚠️ Please read before buying"},
+  agree:{ur:"میں نے اوپر کی تفصیل اور تمام ہدایات پڑھ لی ہیں اور میں ان سے متفق ہوں۔",en:"I have read the description and all warnings above and I agree."},
+  buy:{ur:"خریدیں",en:"Buy"}, sendMoney:{ur:"پیسے بھیجیں",en:"Send payment"},
+  pickAcct:{ur:"جس اکاؤنٹ میں بھیجنا ہو وہ چنیں",en:"Choose where to send the money"},
+  acctName:{ur:"اکاؤنٹ کا نام",en:"Account name"}, copyNum:{ur:"نمبر کاپی کریں",en:"Copy number"},
+  copied:{ur:"کاپی ہو گیا ✔",en:"Copied ✔"}, copyHold:{ur:"دبا کر رکھیں اور کاپی کریں",en:"Press and hold to copy"},
+  qrOnly:{ur:"یہ QR صرف {amt} کے لیے ہے۔ دوسری رقم کے لیے اکاؤنٹ نمبر استعمال کریں۔",en:"This QR is only for {amt}. For another amount use the account number."},
+  payHint:{ur:"اپنی ایپ (ایزی پیسہ، جاز کیش یا بینک ایپ) سے {amt} بھیجیں۔",en:"Send {amt} from your Easypaisa, JazzCash or bank app."},
+  afterPay:{ur:"پیسے بھیجنے کے بعد یہ بھریں",en:"After paying, fill this in"},
+  yName:{ur:"آپ کا نام",en:"Your name"}, yMobile:{ur:"آپ کا موبائل نمبر",en:"Your mobile number"},
+  tid:{ur:"ٹرانزیکشن نمبر (TID)",en:"Transaction ID (TID)"},
+  tidHint:{ur:"یہ نمبر ادائیگی کی رسید یا SMS میں ملتا ہے۔",en:"You can find it in the receipt or SMS."},
+  shot:{ur:"ادائیگی کی اسکرین شاٹ",en:"Payment screenshot"}, pickShot:{ur:"تصویر چنیں",en:"Choose picture"},
+  submit:{ur:"آرڈر بھیجیں",en:"Send order"}, sending:{ur:"بھیج رہے ہیں…",en:"Sending…"},
+  eName:{ur:"اپنا نام لکھیں۔",en:"Please enter your name."},
+  ePhone:{ur:"درست موبائل نمبر لکھیں، مثلاً 03001234567",en:"Enter a valid mobile number, e.g. 03001234567"},
+  eTid:{ur:"ٹرانزیکشن نمبر 6 سے 20 حروف/ہندسوں کا ہونا چاہیے۔",en:"Transaction ID must be 6 to 20 letters/digits."},
+  eShot:{ur:"ادائیگی کی اسکرین شاٹ لگانا ضروری ہے۔",en:"A payment screenshot is required."},
+  sentTitle:{ur:"✔ آرڈر مل گیا",en:"✔ Order received"}, orderNo:{ur:"آرڈر نمبر",en:"Order number"},
+  waitApprove:{ur:"دکاندار آپ کی ادائیگی چیک کرے گا۔ اجازت ملتے ہی آپ کو یہاں ٹوکن ملے گا۔",en:"The seller will check your payment. Once approved, your token will appear here."},
+  viewOrder:{ur:"میرا آرڈر دیکھیں",en:"View my order"},
+  notifyWA:{ur:"دکاندار کو واٹس ایپ پر بتائیں",en:"Tell the seller on WhatsApp"},
+  waNew:{ur:"السلام علیکم، میں نے آرڈر {no} بھیجا ہے ({title}، {amt})۔ اسکرین شاٹ ایپ میں بھیج دی ہے۔",en:"Hello, I placed order {no} ({title}, {amt}). I sent the screenshot in the app."},
+  myOrders:{ur:"میرے آرڈر",en:"My orders"}, noOrders:{ur:"ابھی کوئی آرڈر نہیں۔",en:"No orders yet."},
+  st_pending:{ur:"چیک ہو رہا ہے",en:"Under review"}, st_approved:{ur:"منظور",en:"Approved"}, st_rejected:{ur:"مسترد",en:"Rejected"},
+  yourToken:{ur:"آپ کا ٹوکن",en:"Your token"}, copyTok:{ur:"ٹوکن کاپی کریں",en:"Copy token"},
+  delivery:{ur:"دکاندار کا پیغام",en:"Seller's message"}, reason:{ur:"وجہ",en:"Reason"},
+  chat:{ur:"دکاندار سے بات",en:"Chat with seller"}, chatBuyer:{ur:"گاہک سے بات",en:"Chat with buyer"},
+  msgPh:{ur:"پیغام لکھیں…",en:"Write a message…"}, send:{ur:"بھیجیں",en:"Send"},
+  home:{ur:"ہوم",en:"Home"},
+  oLogin:{ur:"مالک لاگ ان",en:"Owner login"}, email:{ur:"ای میل",en:"Email"}, password:{ur:"پاس ورڈ",en:"Password"},
+  login:{ur:"لاگ ان",en:"Log in"}, logout:{ur:"لاگ آؤٹ",en:"Log out"}, owner:{ur:"مالک",en:"Owner"},
+  loginFail:{ur:"لاگ ان نہیں ہوا۔ ای میل یا پاس ورڈ چیک کریں۔",en:"Login failed. Check email and password."},
+  oOrders:{ur:"آرڈر",en:"Orders"}, oPosts:{ur:"پوسٹیں",en:"Posts"},
+  newPost:{ur:"+ نئی پوسٹ",en:"+ New post"}, editPost:{ur:"پوسٹ بدلیں",en:"Edit post"}, del:{ur:"حذف کریں",en:"Delete"},
+  confirmDel:{ur:"کیا واقعی حذف کریں؟",en:"Really delete?"}, edit:{ur:"بدلیں",en:"Edit"},
+  fTitle:{ur:"عنوان",en:"Title"}, fType:{ur:"قسم (کورس، کتاب...)",en:"Type (course, book...)"}, fDesc:{ur:"تفصیل",en:"Description"},
+  fPrice:{ur:"عام قیمت (Rs)",en:"Regular price (Rs)"}, fOffer:{ur:"آفر کی قیمت (Rs) — اختیاری",en:"Offer price (Rs) — optional"},
+  fEnds:{ur:"آفر ختم ہونے کا وقت",en:"Offer end time"}, fIcon:{ur:"آئیکن (ایموجی)",en:"Icon (emoji)"},
+  fImg:{ur:"پوسٹ کی تصویر",en:"Post picture"}, fWarn:{ur:"ہدایات (ہر سطر ایک)",en:"Warnings (one per line)"},
+  fActive:{ur:"پوسٹ دکھائیں",en:"Show this post"}, save:{ur:"محفوظ کریں",en:"Save"},
+  ur:{ur:"اردو",en:"Urdu"}, en:{ur:"انگریزی",en:"English"},
+  approve:{ur:"منظور کریں اور ٹوکن دیں",en:"Approve and give token"}, reject:{ur:"مسترد کریں",en:"Reject"},
+  delivNote:{ur:"گاہک کے لیے پیغام / لنک (اختیاری)",en:"Message / link for buyer (optional)"},
+  rejReason:{ur:"مسترد کرنے کی وجہ",en:"Reason for rejecting"},
+  amountExp:{ur:"رقم",en:"Amount"}, at:{ur:"وقت",en:"Time"}, phone:{ur:"موبائل",en:"Mobile"},
+  noDb:{ur:"ایپ ابھی ڈیٹا بیس سے نہیں جڑی۔ مالک Firebase کی ترتیب مکمل کرے۔",en:"The app is not connected to its database yet. The owner must finish the Firebase setup."},
+  err:{ur:"خرابی",en:"Error"}, version:{ur:"ورژن",en:"Version"}
+};
+
+/* ---------- Helpers ---------- */
+const $ = s => document.querySelector(s);
+const app = $("#app");
+const mem = {};
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return mem[k] ?? null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k] = v; } }
+};
+const clone = o => JSON.parse(JSON.stringify(o));
+let C = clone(DEFAULT), lang = "ur", db = null, auth = null, user = null, authReady = null;
+let state = { screen: "list" }, unsubs = [], cachePosts = [];
+const t = (k, o) => { let s = (T[k] || {})[lang] || k; if (o) s = s.replace(/\{(\w+)\}/g, (m,x) => o[x]); return s; };
+const L = o => (o && typeof o === "object") ? (o[lang] || o.ur || o.en || "") : (o || "");
+const LW = o => (o && (o[lang] && o[lang].length ? o[lang] : (o.ur && o.ur.length ? o.ur : (o.en || [])))) || [];
+const rs = n => "Rs " + Number(n).toLocaleString("en-US");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const isOwner = () => !!(user && !user.isAnonymous);
+const pad = n => String(n).padStart(2, "0");
+const fmtTime = ts => { try{ const d = ts && ts.toDate ? ts.toDate() : new Date(ts || Date.now()); return d.toLocaleString(lang === "ur" ? "ur-PK" : "en-GB"); }catch(e){ return ""; } };
+const toLocalInput = ms => { if(!ms) return ""; const d = new Date(ms); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const orderNo = id => "#" + id.slice(0, 6).toUpperCase();
+function toast(m){ const el = $("#toast"); el.textContent = m; el.style.display = "block"; clearTimeout(toast.t); toast.t = setTimeout(() => el.style.display = "none", 7000); }
+function showErr(e){ console.error(e); toast(t("err") + ": " + (e && (e.code || e.message) || e)); }
+const clearSubs = () => { unsubs.forEach(u => { try{u();}catch(e){} }); unsubs = []; };
+
+function resizeImage(file, max, q, bg){
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      const g = c.getContext("2d"); g.fillStyle = bg || "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+      let out = c.toDataURL("image/jpeg", q);
+      for (let i = 0; out.length > 700000 && i < 5; i++) out = c.toDataURL("image/jpeg", q -= 0.12);
+      URL.revokeObjectURL(url); res(out);
+    };
+    img.onerror = () => rej(new Error("image"));
+    img.src = url;
+  });
+}
+
+/* offers */
+const offerOn = p => p.offerPrice > 0 && p.offerEnds && Date.now() < p.offerEnds;
+const priceNow = p => offerOn(p) ? Number(p.offerPrice) : Number(p.price);
+function priceHTML(p){
+  if (offerOn(p)) return `<span class="price">${rs(p.offerPrice)}</span><s class="small">${rs(p.price)}</s><span class="chip hot">${t("offer")}</span>`;
+  if (p.offerPrice > 0 && p.offerEnds) return `<span class="price">${rs(p.price)}</span> <span class="chip">${t("offerEnded")}</span>`;
+  return `<span class="price">${rs(p.price)}</span>`;
+}
+const cdHTML = p => offerOn(p) ? `<div class="small">${t("endsIn")}</div><div class="cd" data-end="${p.offerEnds}"></div>` : "";
+function tick(){
+  let expired = false;
+  document.querySelectorAll(".cd").forEach(el => {
+    const left = +el.dataset.end - Date.now();
+    if (left <= 0){ expired = true; return; }
+    const s = Math.floor(left / 1000), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+    el.textContent = (d > 0 ? d + t("d") + " " : "") + `${pad(h)}:${pad(m)}:${pad(s % 60)}`;
+  });
+  if (expired && (state.screen === "list" || state.screen === "detail")) render();
+}
+setInterval(tick, 1000);
+
+function applyTheme(){
+  const r = document.documentElement.style;
+  r.setProperty("--ink", C.colors.primary); r.setProperty("--gold", C.colors.accent);
+  const n = parseInt(C.colors.accent.slice(1), 16), lum = (0.299*(n>>16) + 0.587*((n>>8)&255) + 0.114*(n&255)) / 255;
+  r.setProperty("--gold-ink", lum > 0.55 ? "#2A1B00" : "#FFFFFF");
+  document.querySelector("meta[name=theme-color]").content = C.colors.primary;
+}
+const iconHTML = v => !v ? "🛍️" : (/^(data:image|https?:)/i.test(v) ? `<img src="${esc(v)}" alt="">` : esc(v));
+function updateChrome(){
+  document.documentElement.lang = lang; document.documentElement.dir = lang === "ur" ? "rtl" : "ltr";
+  $("#logo").innerHTML = iconHTML(C.shop.icon);
+  $("#shopName").textContent = L(C.shop.name); $("#shopTag").textContent = L(C.shop.tag);
+  $("#langBtn").textContent = lang === "ur" ? "English" : "اردو";
+  $("#fOrders").textContent = t("myOrders"); $("#fOwner").textContent = t("owner");
+  $("#ver").textContent = t("version") + " " + (C.version || "");
+  document.title = L(C.shop.name);
+}
+
+function go(screen, extra){ clearSubs(); state = Object.assign({ screen }, extra || {}); render(); window.scrollTo(0, 0); }
+function render(){
+  updateChrome();
+  ({ list: viewList, detail: viewDetail, pay: viewPay, sent: viewSent, myorders: viewMyOrders, order: viewOrder,
+     olog: viewOLogin, ohome: viewOHome, opost: viewOPost })[state.screen]();
+  tick();
+}
+const needDb = () => { if (db) return false; app.innerHTML = `<div class="note">${t("noDb")}</div>`; return true; };
+const ensureUser = async () => { if (!authReady) throw new Error("no-auth"); await authReady; return user; };
+
+/* ---------- Buyer: feed ---------- */
+function viewList(){
+  if (needDb()) return;
+  app.innerHTML = `<h2>${t("feed")}</h2><div id="feed"></div>`;
+  const draw = () => {
+    const list = cachePosts.filter(p => p.active !== false);
+    $("#feed").innerHTML = list.length ? list.map(p => `
+      <div class="card post" data-post="${esc(p.id)}" role="button" tabindex="0">
+        ${p.img ? `<img class="pimg" src="${esc(p.img)}" alt="">` : ""}
+        <div class="pb"><div class="row" style="justify-content:flex-start"><span style="font-size:24px">${p.img ? "" : iconHTML(p.icon)}</span>
+          <div><h3>${esc(L(p.title))}</h3><div class="small">${esc(L(p.type))}</div></div></div>
+          <div class="desc">${esc(L(p.desc))}</div>
+          <div style="margin-top:6px">${priceHTML(p)}</div>${cdHTML(p)}</div></div>`).join("") : `<p class="small">${t("noPosts")}</p>`;
+    tick();
+  };
+  draw();
+  unsubs.push(onSnapshot(query(collection(db, "posts"), orderBy("createdAt", "desc")), snap => {
+    cachePosts = snap.docs.map(d => ({ id: d.id, ...d.data() })); if (state.screen === "list") draw();
+  }, showErr));
+}
+
+function viewDetail(){
+  const p = state.post, warns = LW(C.warnings).concat(LW(p.warnings));
+  app.innerHTML = `
+    <button class="back" data-act="home">${t("back")}</button>
+    <div class="card" style="padding:0;overflow:hidden">
+      ${p.img ? `<img class="pimg" style="width:100%;max-height:300px;object-fit:cover" src="${esc(p.img)}" alt="">` : ""}
+      <div class="pb" style="padding:16px">
+        <h2 style="margin-top:0">${p.img ? "" : iconHTML(p.icon) + " "}${esc(L(p.title))}</h2>
+        <div class="small">${esc(L(p.type))}</div>
+        <p style="white-space:pre-line">${esc(L(p.desc))}</p>
+        <div>${priceHTML(p)}</div>${cdHTML(p)}
+        ${offerOn(p) ? `<div class="small">${t("endsAt")}: ${fmtTime(p.offerEnds)}</div>` : ""}
+      </div></div>
+    <div class="warn"><h3>${t("readFirst")}</h3><ul>${warns.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>
+    <label class="check"><input type="checkbox" id="agree"><span>${t("agree")}</span></label>
+    <button class="btn" id="buy" disabled>${t("buy")} — ${rs(priceNow(p))}</button>`;
+  $("#agree").onchange = e => $("#buy").disabled = !e.target.checked;
+  $("#buy").onclick = () => go("pay", { post: p, amount: priceNow(p), offerApplied: offerOn(p), acct: 0, shot: "" });
+}
+
+function viewPay(){
+  const p = state.post, amount = state.amount;
+  const accts = C.accounts;
+  app.innerHTML = `
+    <button class="back" data-act="detail">${t("back")}</button>
+    <h2>${t("sendMoney")}: ${rs(amount)}</h2>
+    <div class="card">
+      <div class="small">${t("pickAcct")}</div>
+      <div class="tabs" id="tabs">${accts.map((a,i) => `<button data-i="${i}" aria-pressed="${i === state.acct}">${esc(L(a.label))}</button>`).join("")}</div>
+      <div class="acct" id="acct"></div>
+      <p class="small">${t("payHint", { amt: rs(amount) })}</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">${t("afterPay")}</h3>
+      <label class="f" for="nm">${t("yName")}</label><input type="text" id="nm" autocomplete="name">
+      <label class="f" for="ph">${t("yMobile")}</label><input type="tel" id="ph" class="ltr" inputmode="numeric" maxlength="11" placeholder="03001234567" autocomplete="tel">
+      <label class="f" for="tid">${t("tid")}</label><input type="text" id="tid" class="ltr" maxlength="20" autocapitalize="characters">
+      <div class="small">${t("tidHint")}</div>
+      <label class="f">${t("shot")}</label>
+      <label class="btn ghost sm" style="margin:0">${t("pickShot")}<input type="file" id="shotIn" accept="image/*" hidden></label>
+      <div id="shotPv">${state.shot ? `<img class="thumb" src="${state.shot}" alt="">` : ""}</div>
+      <div class="err" id="err" role="alert"></div>
+      <button class="btn" id="go" style="margin-top:14px">${t("submit")}</button>
+    </div>`;
+  const draw = () => {
+    const a = accts[state.acct]; if (!a){ $("#acct").innerHTML = ""; return; }
+    $("#acct").innerHTML = `<div class="small">${t("acctName")}: ${esc(a.title)}</div><div class="num">${esc(a.number)}</div>
+      <button class="btn ghost" id="cp" style="margin-top:8px">${t("copyNum")}</button>
+      ${a.qr ? `<img src="${esc(a.qr)}" alt="QR">` : ""}
+      ${a.qr && a.qrAmount && Number(a.qrAmount) !== amount ? `<div class="note">${t("qrOnly", { amt: rs(a.qrAmount) })}</div>` : ""}`;
+    $("#cp").onclick = async () => { try{ await navigator.clipboard.writeText(a.number); $("#cp").textContent = t("copied"); }catch(e){ $("#cp").textContent = t("copyHold"); } };
+    document.querySelectorAll("#tabs button").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.i === state.acct)));
+  };
+  document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => { state.acct = +b.dataset.i; draw(); });
+  draw();
+  $("#shotIn").onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try{ state.shot = await resizeImage(f, 900, 0.72); $("#shotPv").innerHTML = `<img class="thumb" src="${state.shot}" alt="">`; }catch(err){ showErr(err); }
+  };
+  $("#go").onclick = async () => {
+    const nm = $("#nm").value.trim(), ph = $("#ph").value.trim(), tid = $("#tid").value.trim().toUpperCase();
+    const err = m => $("#err").textContent = m;
+    if (nm.length < 2) return err(t("eName"));
+    if (!/^03\d{9}$/.test(ph)) return err(t("ePhone"));
+    if (!/^[A-Z0-9]{6,20}$/.test(tid)) return err(t("eTid"));
+    if (!state.shot) return err(t("eShot"));
+    $("#go").disabled = true; $("#go").textContent = t("sending"); err("");
+    try{
+      const u = await ensureUser();
+      const ref = await addDoc(collection(db, "orders"), {
+        uid: u.uid, postId: p.id, postTitle: p.title || {}, amount, offerApplied: !!state.offerApplied,
+        name: nm, phone: ph, tid, shot: state.shot, status: "pending", createdAt: serverTimestamp()
+      });
+      go("sent", { orderId: ref.id, post: p, amount });
+    }catch(e){ showErr(e); $("#go").disabled = false; $("#go").textContent = t("submit"); }
+  };
+}
+
+function viewSent(){
+  const no = orderNo(state.orderId);
+  const msg = t("waNew", { no, title: L(state.post.title), amt: rs(state.amount) });
+  app.innerHTML = `
+    <div class="card"><div style="color:var(--ok);font-weight:700">${t("sentTitle")}</div>
+      <div class="small">${t("orderNo")}</div><div class="token">${no}</div>
+      <p>${t("waitApprove")}</p>
+      <button class="btn" data-act="openOrder" data-id="${esc(state.orderId)}">${t("viewOrder")}</button>
+      ${C.shop.whatsapp ? `<a class="btn wa" style="margin-top:10px" target="_blank" rel="noopener" href="https://wa.me/${esc(C.shop.whatsapp)}?text=${encodeURIComponent(msg)}">${t("notifyWA")}</a>` : ""}
+    </div>
+    <button class="btn ghost" data-act="home">${t("home")}</button>`;
+}
+
+/* ---------- Orders (buyer list, order view for both) ---------- */
+async function viewMyOrders(){
+  if (needDb()) return;
+  app.innerHTML = `<h2>${t("myOrders")}</h2><div id="ol"></div>`;
+  try{
+    const u = await ensureUser();
+    unsubs.push(onSnapshot(query(collection(db, "orders"), where("uid", "==", u.uid)), snap => {
+      const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.createdAt?.seconds || 9e9) - (a.createdAt?.seconds || 9e9));
+      $("#ol").innerHTML = list.length ? list.map(orderCard).join("") : `<p class="small">${t("noOrders")}</p>`;
+    }, showErr));
+  }catch(e){ showErr(e); }
+}
+const orderCard = o => `<div class="card" data-act="openOrder" data-id="${esc(o.id)}" role="button" tabindex="0" style="cursor:pointer">
+  <div class="row"><b>${esc(L(o.postTitle))}</b><span class="chip ${o.status}">${t("st_" + o.status)}</span></div>
+  <div class="small">${orderNo(o.id)} · ${rs(o.amount)} · ${fmtTime(o.createdAt)}</div>
+  ${isOwner() ? `<div class="small">${esc(o.name)} · ${esc(o.phone)}</div>` : ""}</div>`;
+
+function viewOrder(){
+  if (needDb()) return;
+  const id = state.orderId, owner = isOwner();
+  app.innerHTML = `<button class="back" data-act="${owner ? "ohome" : "myorders"}">${t("back")}</button><div id="od"></div>
+    <div class="card"><h3 style="margin-top:0">${owner ? t("chatBuyer") : t("chat")}</h3>
+      <div class="msgs" id="msgs"></div>
+      <div class="sendrow"><input type="text" id="mi" placeholder="${t("msgPh")}"><button class="btn" id="ms">${t("send")}</button></div></div>`;
+  unsubs.push(onSnapshot(doc(db, "orders", id), s => {
+    if (!s.exists()) return; const o = { id: s.id, ...s.data() }; state.cur = o; drawOrder(o, owner);
+  }, showErr));
+  unsubs.push(onSnapshot(query(collection(db, "orders", id, "messages"), orderBy("createdAt", "asc")), snap => {
+    const me = owner ? "owner" : "buyer", box = $("#msgs"); if (!box) return;
+    box.innerHTML = snap.docs.map(d => { const m = d.data(); return `<div class="bub ${m.from === me ? "me" : ""}">${esc(m.text)}</div>`; }).join("");
+    box.scrollTop = box.scrollHeight;
+  }, showErr));
+  const sendMsg = async () => {
+    const v = $("#mi").value.trim(); if (!v) return; $("#mi").value = "";
+    try{ await addDoc(collection(db, "orders", id, "messages"), { from: owner ? "owner" : "buyer", text: v.slice(0, 1000), createdAt: serverTimestamp() }); }catch(e){ showErr(e); }
+  };
+  $("#ms").onclick = sendMsg; $("#mi").onkeydown = e => { if (e.key === "Enter") sendMsg(); };
+}
+
+function drawOrder(o, owner){
+  const box = $("#od"); if (!box) return;
+  const keepNote = $("#dn") ? $("#dn").value : "", keepRej = $("#rj") ? $("#rj").value : "";
+  let h = `<div class="card"><div class="row"><b>${esc(L(o.postTitle))}</b><span class="chip ${o.status}">${t("st_" + o.status)}</span></div>
+    <div class="small">${orderNo(o.id)} · ${t("amountExp")}: ${rs(o.amount)}${o.offerApplied ? " · " + t("offer") : ""}</div>
+    <div class="small">${t("at")}: ${fmtTime(o.createdAt)}</div>`;
+  if (owner) h += `<div class="small">${esc(o.name)} · ${t("phone")}: <a href="tel:${esc(o.phone)}">${esc(o.phone)}</a> · TID: <b>${esc(o.tid)}</b></div>
+    <img class="shot" src="${esc(o.shot)}" alt="">`;
+  if (o.status === "approved"){
+    h += `<div class="small" style="margin-top:8px">${t("yourToken")}</div><div class="token">${esc(o.token)}</div>
+      ${o.note ? `<div class="small">${t("delivery")}</div><div style="white-space:pre-wrap;word-break:break-word">${esc(o.note)}</div>` : ""}`;
+  }
+  if (o.status === "rejected") h += `<div class="err">${t("reason")}: ${esc(o.rejectReason || "")}</div>`;
+  if (!owner && o.status === "pending") h += `<p>${t("waitApprove")}</p>`;
+  if (owner && o.status === "pending") h += `
+    <label class="f" for="dn">${t("delivNote")}</label><textarea id="dn" rows="3"></textarea>
+    <button class="btn" id="ap" style="margin-top:10px">${t("approve")}</button>
+    <label class="f" for="rj">${t("rejReason")}</label><input type="text" id="rj">
+    <button class="btn red" id="rjb" style="margin-top:10px">${t("reject")}</button>`;
+  box.innerHTML = h + "</div>";
+  if ($("#dn")) $("#dn").value = keepNote; if ($("#rj")) $("#rj").value = keepRej;
+  if ($("#ap")) $("#ap").onclick = async () => {
+    const a = new Uint8Array(8); crypto.getRandomValues(a);
+    const al = "ABCDEFGHJKMNPQRSTUVWXYZ23456789", c = Array.from(a, x => al[x % al.length]).join("");
+    try{ await updateDoc(doc(db, "orders", o.id), { status: "approved", token: `TKN-${c.slice(0,4)}-${c.slice(4)}`, note: $("#dn").value.trim().slice(0, 1500), approvedAt: serverTimestamp() }); }catch(e){ showErr(e); }
+  };
+  if ($("#rjb")) $("#rjb").onclick = async () => {
+    try{ await updateDoc(doc(db, "orders", o.id), { status: "rejected", rejectReason: $("#rj").value.trim().slice(0, 300) }); }catch(e){ showErr(e); }
+  };
+}
+
+/* ---------- Owner ---------- */
+function viewOLogin(){
+  if (needDb()) return;
+  app.innerHTML = `<button class="back" data-act="home">${t("back")}</button><h2>${t("oLogin")}</h2>
+    <div class="card"><label class="f" for="em">${t("email")}</label><input type="text" id="em" class="ltr" autocapitalize="none" autocomplete="username">
+    <label class="f" for="pw">${t("password")}</label><input type="password" id="pw" class="ltr" autocomplete="current-password">
+    <div class="err" id="err" role="alert"></div><button class="btn" id="lg" style="margin-top:12px">${t("login")}</button></div>`;
+  $("#lg").onclick = async () => {
+    try{ await signInWithEmailAndPassword(auth, $("#em").value.trim(), $("#pw").value); go("ohome", { tab: "orders" }); }
+    catch(e){ $("#err").textContent = t("loginFail"); console.error(e); }
+  };
+}
+
+function viewOHome(){
+  if (!isOwner()) return go("olog");
+  const tab = state.tab || "orders";
+  app.innerHTML = `<div class="row"><h2>${t("owner")}</h2><button class="btn ghost sm" id="lo">${t("logout")}</button></div>
+    <div class="tabbar"><button data-act="otab" data-tab="orders" aria-pressed="${tab === "orders"}">${t("oOrders")}</button>
+    <button data-act="otab" data-tab="posts" aria-pressed="${tab === "posts"}">${t("oPosts")}</button></div><div id="oc"></div>`;
+  $("#lo").onclick = async () => { await signOut(auth); go("list"); };
+  if (tab === "orders"){
+    unsubs.push(onSnapshot(query(collection(db, "orders"), orderBy("createdAt", "desc")), snap => {
+      const rank = { pending: 0, approved: 1, rejected: 2 };
+      const list = snap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (rank[a.status] - rank[b.status]));
+      $("#oc").innerHTML = list.length ? list.map(orderCard).join("") : `<p class="small">${t("noOrders")}</p>`;
+    }, showErr));
+  } else {
+    $("#oc").innerHTML = `<button class="btn" data-act="newpost">${t("newPost")}</button><div id="pl" style="margin-top:12px"></div>`;
+    unsubs.push(onSnapshot(query(collection(db, "posts"), orderBy("createdAt", "desc")), snap => {
+      cachePosts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      $("#pl").innerHTML = cachePosts.map(p => `<div class="card"><div class="row"><b>${esc(L(p.title))}</b>
+        <span class="chip ${p.active === false ? "" : "approved"}">${p.active === false ? "OFF" : "ON"}</span></div>
+        <div>${priceHTML(p)}</div>${cdHTML(p)}
+        <div class="row" style="margin-top:8px"><button class="btn ghost sm" data-act="editpost" data-id="${esc(p.id)}">${t("edit")}</button>
+        <button class="btn red sm" data-act="delpost" data-id="${esc(p.id)}">${t("del")}</button></div></div>`).join("");
+      tick();
+    }, showErr));
+  }
+}
+
+function bi(label, id, v, o = {}){
+  const f = (suffix, name) => `<label class="f" for="${id}_${suffix}">${label} — ${name}</label>` + (o.area
+    ? `<textarea id="${id}_${suffix}" rows="${o.rows || 3}" class="${suffix === "en" ? "ltr" : ""}">${esc(v && v[suffix] ? (o.lines ? v[suffix].join("\n") : v[suffix]) : "")}</textarea>`
+    : `<input type="text" id="${id}_${suffix}" class="${suffix === "en" ? "ltr" : ""}" value="${esc(v && v[suffix] || "")}">`);
+  return f("ur", t("ur")) + f("en", t("en"));
+}
+function viewOPost(){
+  if (!isOwner()) return go("olog");
+  const p = state.post || { active: true, price: 0, offerPrice: 0, offerEnds: 0, icon: "📘", img: "" };
+  state.img = p.img || "";
+  app.innerHTML = `<button class="back" data-act="ohomeposts">${t("back")}</button><h2>${state.post ? t("editPost") : t("newPost")}</h2>
+    <div class="card">
+      ${bi(t("fTitle"), "ti", p.title)}${bi(t("fType"), "ty", p.type)}${bi(t("fDesc"), "de", p.desc, { area: 1, rows: 4 })}
+      <label class="f" for="pr">${t("fPrice")}</label><input type="text" id="pr" class="ltr" inputmode="numeric" value="${p.price || ""}">
+      <label class="f" for="of">${t("fOffer")}</label><input type="text" id="of" class="ltr" inputmode="numeric" value="${p.offerPrice || ""}">
+      <label class="f" for="oe">${t("fEnds")}</label><input type="datetime-local" id="oe" class="ltr" value="${toLocalInput(p.offerEnds)}">
+      <label class="f" for="ic">${t("fIcon")}</label><input type="text" id="ic" value="${esc(p.icon || "")}">
+      <label class="f">${t("fImg")}</label><label class="btn ghost sm" style="margin:0">${t("pickShot")}<input type="file" id="pi" accept="image/*" hidden></label>
+      <div id="ipv">${state.img ? `<img class="thumb" src="${state.img}" alt=""> <button class="btn red sm" id="ri">${t("del")}</button>` : ""}</div>
+      ${bi(t("fWarn"), "wa", p.warnings, { area: 1, rows: 3, lines: 1 })}
+      <label class="check"><input type="checkbox" id="ac" ${p.active === false ? "" : "checked"}><span>${t("fActive")}</span></label>
+      <div class="err" id="err"></div><button class="btn" id="sv">${t("save")}</button></div>`;
+  const pv = () => { $("#ipv").innerHTML = state.img ? `<img class="thumb" src="${state.img}" alt=""> <button class="btn red sm" id="ri">${t("del")}</button>` : ""; if ($("#ri")) $("#ri").onclick = () => { state.img = ""; pv(); }; };
+  pv();
+  $("#pi").onchange = async e => { const f = e.target.files[0]; if (!f) return; try{ state.img = await resizeImage(f, 700, 0.75); pv(); }catch(err){ showErr(err); } };
+  const lines = id => $(id).value.split("\n").map(s => s.trim()).filter(Boolean);
+  $("#sv").onclick = async () => {
+    const price = parseInt($("#pr").value, 10) || 0, offerPrice = parseInt($("#of").value, 10) || 0;
+    const oe = $("#oe").value ? new Date($("#oe").value).getTime() : 0;
+    if (!price) return $("#err").textContent = t("fPrice");
+    const data = {
+      title: { ur: $("#ti_ur").value.trim(), en: $("#ti_en").value.trim() }, type: { ur: $("#ty_ur").value.trim(), en: $("#ty_en").value.trim() },
+      desc: { ur: $("#de_ur").value.trim(), en: $("#de_en").value.trim() }, price, offerPrice, offerEnds: offerPrice ? oe : 0,
+      icon: $("#ic").value.trim(), img: state.img || "", warnings: { ur: lines("#wa_ur"), en: lines("#wa_en") }, active: $("#ac").checked
+    };
+    try{
+      if (state.post) await updateDoc(doc(db, "posts", state.post.id), data);
+      else await addDoc(collection(db, "posts"), { ...data, createdAt: serverTimestamp() });
+      go("ohome", { tab: "posts" });
+    }catch(e){ showErr(e); }
+  };
+}
+
+/* ---------- Events ---------- */
+app.addEventListener("click", async e => {
+  const el = e.target.closest("[data-act],[data-post]"); if (!el) return;
+  if (el.dataset.post){ const p = cachePosts.find(x => x.id === el.dataset.post); if (p) go("detail", { post: p }); return; }
+  const a = el.dataset.act, id = el.dataset.id;
+  if (a === "home") go("list");
+  else if (a === "detail") go("detail", { post: state.post });
+  else if (a === "myorders") go("myorders");
+  else if (a === "openOrder") go("order", { orderId: id });
+  else if (a === "ohome") go("ohome", { tab: "orders" });
+  else if (a === "ohomeposts") go("ohome", { tab: "posts" });
+  else if (a === "otab") go("ohome", { tab: el.dataset.tab });
+  else if (a === "newpost") go("opost", { post: null });
+  else if (a === "editpost") go("opost", { post: cachePosts.find(x => x.id === id) });
+  else if (a === "delpost"){ if (confirm(t("confirmDel"))) try{ await deleteDoc(doc(db, "posts", id)); }catch(err){ showErr(err); } }
+});
+app.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.matches("[role=button]")) e.target.click(); });
+$("#langBtn").onclick = () => { lang = lang === "ur" ? "en" : "ur"; store.set("lang", lang); render(); };
+$("#fOrders").onclick = () => go("myorders");
+$("#fOwner").onclick = () => go(isOwner() ? "ohome" : "olog", { tab: "orders" });
+
+/* ---------- Start ---------- */
+(async function boot(){
+  try{ const r = await fetch("config.json", { cache: "no-store" }); if (r.ok) C = Object.assign(clone(DEFAULT), await r.json()); }catch(e){}
+  lang = store.get("lang") || C.defaultLang || "ur";
+  applyTheme();
+  if (C.firebase && C.firebase.apiKey){
+    try{
+      const B = "https://www.gstatic.com/firebasejs/10.12.2/";
+      const [m1, m2, m3] = await Promise.all([import(B + "firebase-app.js"), import(B + "firebase-auth.js"), import(B + "firebase-firestore.js")]);
+      ({ initializeApp } = m1);
+      ({ getAuth, onAuthStateChanged, signInAnonymously, signInWithEmailAndPassword, signOut } = m2);
+      ({ getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, serverTimestamp } = m3);
+      const fb = initializeApp(C.firebase); auth = getAuth(fb); db = getFirestore(fb);
+      authReady = new Promise(res => onAuthStateChanged(auth, u => {
+        user = u;
+        if (u) res(u); else signInAnonymously(auth).catch(showErr);
+      }));
+    }catch(e){ showErr(e); }
+  }
+  go("list");
+})();
+</script>
+</body>
+</html>
